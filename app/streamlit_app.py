@@ -1,94 +1,158 @@
 """Consent — publish your impact without publishing your people.
 
-The app connects as role CONSENT_APP, which has SELECT on exactly one table.
-It cannot read RAW_CASES. That is not a policy in a README; it is a grant.
+Presentation only. Every question about where a row came from is answered by
+app/warehouse.py, so this file never has to know whether it is talking to a live
+Snowflake connection or to the published snapshot.
+
+The app connects as role CONSENT_APP, which has SELECT on three objects and no
+access at all to the private table. That is not a policy in a README; it is a grant.
 """
-import os
+from __future__ import annotations
+
+import io
+import csv
+
 import streamlit as st
-import snowflake.connector
+
+from warehouse import Case, open_source
 
 st.set_page_config(page_title="Consent", page_icon="🔒", layout="wide")
 
-CORTEX_PROBES = {
-    "AI_AGG": "SELECT AI_AGG(c,'one word') FROM (SELECT 'x' c)",
-    "AI_REDACT": "SELECT AI_REDACT('call Maria on 555-0142')",
-    "AI_CLASSIFY": "SELECT AI_CLASSIFY('needs food',['food','housing'])",
-    "AI_FILTER": "SELECT AI_FILTER('is this unresolved','rent overdue')",
-    "AI_EXTRACT": "SELECT AI_EXTRACT('needs food',{'need':'what they need'})",
-}
+NEED_ORDER = ["food", "housing", "health", "legal"]
 
 
-@st.cache_resource
-def connect():
-    return snowflake.connector.connect(
-        account=os.environ["SNOWFLAKE_ACCOUNT"],
-        user=os.environ["SNOWFLAKE_USER"],
-        password=os.environ["SNOWFLAKE_PASSWORD"],
-        role=os.environ.get("SNOWFLAKE_ROLE", "CONSENT_APP"),
-        warehouse=os.environ.get("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
-        database=os.environ.get("SNOWFLAKE_DATABASE", "CONSENT"),
-        schema=os.environ.get("SNOWFLAKE_SCHEMA", "APP"),
-    )
+def as_csv(rows: list[Case]) -> str:
+    """The de-identified dataset, in the shape a funder can actually be handed."""
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["case_id", "intake_date", "redacted_note", "need_type", "unresolved"])
+    for c in rows:
+        writer.writerow([c.case_id, c.intake_date, c.redacted_note, c.need_type, c.unresolved])
+    return buf.getvalue()
 
 
-def q(sql, params=None):
-    with connect().cursor() as cur:
-        cur.execute(sql, params or {})
-        return cur.fetchall()
+@st.cache_resource(show_spinner=False)
+def _source():
+    return open_source()
 
 
+source, reason = _source()
+status = source.status(reason)
+cases: list[Case] = source.cases()
+brief = source.brief()
+boundary = source.boundary_test()
+private_rows = source.private_row_count()
+
+# ── Header ───────────────────────────────────────────────────────────────────
 st.title("Consent")
 st.caption("Publish your impact without publishing your people.")
+st.markdown(
+    "A charity's proof of impact is made of other people's private lives, so the "
+    "proof never gets published. **Consent keeps the raw record inside the "
+    "warehouse and lets only the redacted truth out.**"
+)
 
-left, right = st.columns(2)
+if status.mode == "live":
+    st.success(f"Live warehouse connection · role `{status.role}`", icon="🔗")
+else:
+    st.warning(
+        f"**Snapshot mode.** {status.note} What you see below is the pipeline's "
+        "published output — the only part that was ever allowed to leave the "
+        "warehouse — exported from Snowflake and committed to the repository.",
+        icon="📄",
+    )
+
+st.divider()
+
+left, right = st.columns([1, 1.35], gap="large")
 
 # ── LEFT: what stays in the warehouse ────────────────────────────────────────
 with left:
     st.subheader("Stays in the warehouse")
-    try:
-        # Deliberately attempted. The failure IS the demo.
-        q("SELECT raw_note FROM CONSENT.APP.RAW_CASES LIMIT 1")
-        st.error("This app could read the private table. That is a bug — check the grants.")
-    except Exception as exc:  # noqa: BLE001 — the exception is the product
-        st.info("This app's role cannot SELECT this table.")
-        st.code(str(exc).strip()[:400], language="text")
-    st.metric("Private rows held", q("SELECT COUNT(*) FROM CONSENT.APP.SAFE_CASES")[0][0])
-    st.caption("A row count is all this role is allowed to know.")
+    st.metric("Private records held", private_rows if private_rows is not None else "—")
+    st.caption(
+        "A count is all this role is allowed to know. `PRIVATE_ROW_COUNT` is a view, "
+        "so it runs with its owner's rights: the app learns *how many*, never *who*."
+    )
 
-# ── RIGHT: what you may publish ──────────────────────────────────────────────
+    st.markdown("**The read this app is not allowed to make**")
+    st.code("SELECT raw_note FROM CONSENT.APP.RAW_CASES LIMIT 1", language="sql")
+    if boundary.denied:
+        st.error(boundary.message, icon="🚫")
+    else:
+        st.warning(boundary.message, icon="⚠️")
+
+    st.caption(
+        "Not hidden by the interface. Refused by the engine, because of one line "
+        "that was never written:"
+    )
+    st.code(
+        "GRANT SELECT ON TABLE CONSENT.APP.SAFE_CASES TO ROLE CONSENT_APP;\n"
+        "-- deliberately NOT granted: RAW_CASES",
+        language="sql",
+    )
+
+# ── RIGHT: what may be published ─────────────────────────────────────────────
 with right:
     st.subheader("Safe to publish")
-    rows = q(
-        "SELECT case_id, intake_date, redacted_note, need_type, unresolved "
-        "FROM CONSENT.APP.SAFE_CASES ORDER BY intake_date"
-    )
-    st.dataframe(
-        [
-            {"case": r[0], "date": r[1], "note": r[2], "need": r[3], "open": r[4]}
-            for r in rows
-        ],
-        use_container_width=True,
-    )
-    st.download_button(
-        "Download de-identified dataset (CSV)",
-        "\n".join(",".join(map(str, r)) for r in rows),
-        "safe_cases.csv",
-    )
+
+    if brief is not None:
+        st.markdown("**Impact brief**")
+        st.info(brief.text)
+        st.caption(
+            f"Written by `AI_AGG` across every redacted row · method: `{brief.method}` "
+            f"· generated {brief.generated_at}"
+        )
+
+    if cases:
+        counts = {n: sum(1 for c in cases if c.need_type == n) for n in NEED_ORDER}
+        cols = st.columns(len(NEED_ORDER))
+        for col, need in zip(cols, NEED_ORDER):
+            col.metric(need.title(), counts.get(need, 0))
+
+        st.dataframe(
+            [
+                {
+                    "case": c.case_id,
+                    "date": c.intake_date,
+                    "redacted note": c.redacted_note,
+                    "need": c.need_type,
+                    "still open": c.unresolved,
+                }
+                for c in cases
+            ],
+            use_container_width=True,
+            hide_index=True,
+            height=320,
+        )
+        st.download_button(
+            "Download the de-identified dataset (CSV)",
+            as_csv(cases),
+            "safe_cases.csv",
+            "text/csv",
+        )
+    else:
+        st.info("No published rows yet. Run `sql/30_leg_c_cortex.sql`.")
 
 # ── Warehouse status — the honesty panel ─────────────────────────────────────
+st.divider()
 with st.expander("Warehouse status", expanded=True):
-    try:
-        region, account, role = q(
-            "SELECT CURRENT_REGION(), CURRENT_ACCOUNT(), CURRENT_ROLE()"
-        )[0]
-        st.write(f"**Region** `{region}` · **Account** `{account}` · **Role** `{role}`")
-    except Exception as exc:  # noqa: BLE001
-        st.error(f"No warehouse connection: {exc}")
-
-    st.caption("Live probe — I would rather show you a red light than claim a green one.")
-    for name, probe in CORTEX_PROBES.items():
-        try:
-            q(probe)
-            st.write(f"✅ `{name}`")
-        except Exception as exc:  # noqa: BLE001
-            st.write(f"❌ `{name}` — {str(exc).strip()[:120]}")
+    st.caption(
+        "I would rather show you a red light than claim a green one. These are the "
+        "verdicts this account actually returns."
+    )
+    if status.mode == "live":
+        st.write(
+            f"**Region** `{status.region}` · **Account** `{status.account}` · "
+            f"**Role** `{status.role}` · **Version** `{status.version}`"
+        )
+        for name, err in status.probes.items():
+            if err:
+                st.write(f"❌ `{name}` — {err}")
+            else:
+                st.write(f"✅ `{name}`")
+    else:
+        st.write(
+            "Not connected, so nothing here is probed live. The recorded verdicts "
+            "from the account this was built on are in `memory.md` and the README."
+        )

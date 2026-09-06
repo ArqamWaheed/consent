@@ -1,9 +1,16 @@
 -- ============================================================================
--- LEG B — the boundary as an engine-enforced policy.  ENTERPRISE EDITION ONLY.
+-- LEG B — the boundary as an engine-enforced policy.
 --
--- With Leg A the app is not allowed to ask.
--- With Leg B the engine answers differently depending on who is asking — and no
--- application code decides that, which means no application bug can undo it.
+-- ⚠️  NOT AVAILABLE ON THE ACCOUNT THIS WAS BUILT ON. Verbatim:
+--        Unsupported feature 'MASKING POLICY'.
+--     Dynamic Data Masking requires Enterprise Edition or higher. The trial used
+--     here is Standard Edition, and edition is fixed at signup.
+--
+-- This file is kept, unrun, because it is the documented upgrade path and because
+-- deleting the thing you could not have is how a capability grid becomes a lie.
+-- On Enterprise it is four lines, and it is the strongest part of the design:
+-- Leg A means the app is not ALLOWED to ask; Leg B means the engine ANSWERS
+-- DIFFERENTLY depending on who asks, with no application code in the decision.
 -- ============================================================================
 USE ROLE SYSADMIN;
 USE SCHEMA CONSENT.APP;
@@ -19,6 +26,3 @@ ALTER TABLE RAW_CASES MODIFY COLUMN raw_note SET MASKING POLICY pii_mask;
 --     -> the full note, because a caseworker is supposed to see it
 --   USE ROLE CONSENT_APP;  SELECT raw_note FROM CONSENT.APP.RAW_CASES LIMIT 1;
 --     -> denied by Leg A before the policy is even consulted
---
--- Two independent locks on the same door. Leg B is the one that still holds if
--- somebody, some day, grants the app more than they meant to.

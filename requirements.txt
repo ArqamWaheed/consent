@@ -1,2 +1,2 @@
-streamlit
-snowflake-connector-python
+streamlit>=1.38
+snowflake-connector-python>=3.12
