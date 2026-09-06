@@ -3,9 +3,10 @@
 **Deadline:** 2026-09-07 06:59 UTC. **Spec:** `03-PLAYBOOK-consent.md` (local only, gitignored).
 
 ## Current milestone
-**M8 — one action left: publish the dev.to draft.**
+**Shipped.** Post published, app live against the warehouse.
 
-**Live app:** https://consent-warehouse.streamlit.app (public, snapshot mode)
+**Live app:** https://consent-warehouse.streamlit.app (public, **live mode**)
+**Post:** https://dev.to/arqamwd/the-charity-had-the-proof-it-just-couldnt-show-anyone-hdk
 **Repo:** https://github.com/ArqamWaheed/consent (public)
 **Draft:** saved and unpublished on dev.to, carrying the challenge submission badge.
 
@@ -31,8 +32,17 @@
 - Post updated with the live URL and the `{% github %}` embed (which only validates
   once the repo is public), re-saved as a draft.
 
-## Blocked on the account owner
-1. **Publish the dev.to draft.** Everything else is in place.
+## Live mode is on
+`CONSENT_APP_SVC` (key-pair, one role, `DEFAULT_SECONDARY_ROLES=()`) is configured in
+Streamlit's Secrets. Verified from a clean browser against the public URL: green live
+banner, empty secondary roles, and the boundary refusal performed live.
+
+**If the app ever shows the snapshot banner again, reboot it before debugging
+anything else.** Streamlit Cloud served pre-`0f1359e` code for a while after the push,
+so the secrets bridge was missing and it reported "no credentials configured". A
+reboot fixed it.
+
+## Nothing is blocked
 
 ## Optional, in priority order if there is time
 1. **Live mode for the deployed app** — create a Snowflake user restricted to

@@ -219,3 +219,7 @@ The app now runs `USE SECONDARY ROLES NONE` on connect, and prints `CURRENT_SECO
 Generosity in this challenge mostly got read as giving. This one is about the gift going the other way: sixty people gave a charity the worst week of their lives, on the understanding that it stayed private. Keeping that promise shouldn't cost them the proof that the help worked.
 
 What would you want redacted before you'd share your own worst spreadsheet?
+
+<!-- NOTE: this is the pre-publication draft. The published post has since been
+     edited by the author (rewritten opening, YouTube walkthrough, live-mode
+     concession). The post itself is the source of truth, not this file. -->
