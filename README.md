@@ -58,6 +58,41 @@ line, which makes the docs predictive: if a function is listed as needing
 
 ---
 
+## The bug that would have shipped
+
+The boundary test is one query, and the first time it ran for real it **returned the
+private note**:
+
+```sql
+USE ROLE CONSENT_APP;
+SELECT CURRENT_ROLE();                              -- CONSENT_APP
+SELECT raw_note FROM CONSENT.APP.RAW_CASES LIMIT 1; -- ...the note. In full.
+```
+
+`USE ROLE` sets your *primary* role. It drops nothing. Every other role the user
+holds stays active as a **secondary role**, and authorization considers those too:
+
+```sql
+SELECT CURRENT_SECONDARY_ROLES();
+-- {"roles":"ACCOUNTADMIN,ORGADMIN","value":"ALL"}
+```
+
+One statement fixes it, and the same query is then refused:
+
+```sql
+USE SECONDARY ROLES NONE;
+SELECT raw_note FROM CONSENT.APP.RAW_CASES LIMIT 1;
+-- SQL compilation error: Object 'CONSENT.APP.RAW_CASES' does not exist or not authorized.
+```
+
+The app issues `USE SECONDARY ROLES NONE` on connect (`app/warehouse.py`) and prints
+`CURRENT_SECONDARY_ROLES()` in the status panel, so you can check it rather than
+trust it. **Without that line the grant boundary is decorative** — and it looks
+completely correct from the outside, because `CURRENT_ROLE()` says exactly what you
+expect.
+
+---
+
 ## The trick that saved Layer C
 
 `AI_AGG` is an aggregate. Group by a unique key and every group holds one row, which
@@ -111,7 +146,8 @@ in a yellow banner. It never dresses one up as the other.
 
 ## Interesting files
 
-- `sql/10_leg_a_grants.sql` — the six grants the app gets, and the one it does not.
+- `sql/10_leg_a_grants.sql` — the six grants the app gets, the one it does not, and
+  the secondary-roles trap written out in full.
 - `sql/30_leg_c_cortex.sql` — the `AI_AGG` per-row transform.
 - `app/warehouse.py` — the whole live/snapshot decision, in one module.
 - `data/safe_cases_snapshot.csv` — the published output, checked in.

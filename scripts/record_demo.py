@@ -23,6 +23,7 @@ SCRATCH = Path(
 )
 VOICE = SCRATCH / "voices" / "en_GB-alba-medium.onnx"
 WIDTH, HEIGHT = 1280, 720
+TALL_VIEWPORT = 2200   # tall enough to lay the whole app out without scrolling
 
 # Each beat: how long the camera holds, and what is said over it.
 BEATS = [
@@ -49,7 +50,9 @@ BEATS = [
         say=(
             "This is the app deliberately trying to read the private note, and being "
             "refused by the engine. Not hidden by the interface. Refused, because of "
-            "one grant that was never written."
+            "one grant that was never written. The first time this test ran for real, "
+            "it returned the note, because the role had secondary roles still active. "
+            "One statement fixed it: use secondary roles none."
         ),
         action="denied",
     ),
@@ -99,35 +102,67 @@ def say(text: str, out_wav: Path) -> float:
 
 
 def shoot(url: str, workdir: Path, durations: list[float]) -> list[Path]:
-    """Screenshot the app once per beat, scrolled to the region that beat describes."""
+    """One framed still per beat.
+
+    Streamlit scrolls an inner container, so window.scrollTo and
+    scroll_into_view_if_needed are both unreliable here. Instead render the whole
+    page tall, measure the anchor element, and take a full-page screenshot clipped
+    to a 1280x720 window around it. Deterministic, and every beat is guaranteed to
+    frame the thing its narration is talking about.
+    """
     from playwright.sync_api import sync_playwright
 
     shots: list[Path] = []
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
-        page = browser.new_page(viewport={"width": WIDTH, "height": HEIGHT})
+        # Streamlit scrolls section[data-testid="stMain"], and document.body has
+        # zero height, so a "scroll then shoot" loop captures the same frame every
+        # time. Render tall enough that the whole app is laid out at once, then clip.
+        page = browser.new_page(viewport={"width": WIDTH, "height": TALL_VIEWPORT})
         page.goto(url, wait_until="networkidle", timeout=60_000)
-        page.wait_for_timeout(4000)
+        page.wait_for_timeout(5000)
+        page.get_by_text("Warehouse status", exact=False).first.wait_for(timeout=30_000)
+        page.wait_for_timeout(1500)
+
+        total = page.evaluate(
+            "() => { const m = document.querySelector('section[data-testid=\"stMain\"]');"
+            "  return m ? m.scrollHeight : document.documentElement.scrollHeight; }"
+        )
         for beat in BEATS:
-            _position(page, beat["action"])
-            page.wait_for_timeout(900)
+            top = _anchor_top(page, beat["action"])
+            top = max(0, min(top, max(0, total - HEIGHT)))
             path = workdir / f"{beat['name']}.png"
-            page.screenshot(path=str(path))
+            page.screenshot(
+                path=str(path),
+                clip={"x": 0, "y": top, "width": WIDTH, "height": HEIGHT},
+            )
             shots.append(path)
         browser.close()
     return shots
 
 
-def _position(page, action: str) -> None:
-    targets = {
-        "top": 0,
-        "left": 380,
-        "denied": 780,
-        "right": 380,
-        "status": 2200,
-    }
-    page.mouse.wheel(0, 0)
-    page.evaluate(f"window.scrollTo(0, {targets.get(action, 0)})")
+# Streamlit scrolls an inner container, not the window. Anchor each beat on real
+# text and frame the shot from that element's measured position.
+_ANCHORS = {
+    "top": "Publish your impact without publishing your people.",
+    "left": "Stays in the warehouse",
+    "denied": "The read this app is not allowed to make",
+    "right": "Impact brief",
+    "status": "Warehouse status",
+}
+
+# How far above the anchor the frame starts, so the heading is not flush to the edge.
+_HEADROOM = 70
+
+
+def _anchor_top(page, action: str) -> float:
+    text = _ANCHORS.get(action)
+    if not text:
+        return 0.0
+    box = page.get_by_text(text, exact=False).first.bounding_box()
+    if not box:
+        return 0.0
+    return box["y"] - _HEADROOM
 
 
 def build(shots: list[Path], wavs: list[Path], durations: list[float], out: Path) -> None:
@@ -150,12 +185,14 @@ def build(shots: list[Path], wavs: list[Path], durations: list[float], out: Path
         segments.append(seg)
 
     listing = work / "segments.txt"
-    listing.write_text("".join(f"file '{s.name}'\n" for s in segments))
-    subprocess.run(
-        ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(listing),
-         "-c", "copy", str(out)],
-        check=True, cwd=work, capture_output=True,
+    listing.write_text("".join(f"file '{seg.name}'\n" for seg in segments))
+    result = subprocess.run(
+        ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", "segments.txt",
+         "-c", "copy", str(out.resolve())],
+        cwd=work, capture_output=True, text=True,
     )
+    if result.returncode != 0:
+        raise RuntimeError(f"ffmpeg concat failed:\n{result.stderr[-2000:]}")
     shutil.rmtree(work, ignore_errors=True)
 
 
