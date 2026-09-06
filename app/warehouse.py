@@ -235,6 +235,35 @@ class LiveSource:
         )
 
 
+def _private_key_der() -> bytes | None:
+    """Load the key material, from an inline PEM or a file, as DER for the connector.
+
+    Streamlit Cloud has no filesystem to point at, so the deployed app supplies the
+    key inline as `SNOWFLAKE_PRIVATE_KEY`. Locally a path is easier, so both work.
+    Nothing here is ever logged or returned.
+    """
+    from cryptography.hazmat.primitives import serialization
+
+    pem = os.environ.get("SNOWFLAKE_PRIVATE_KEY")
+    if pem:
+        raw = pem.strip().encode()
+    else:
+        path = os.environ.get("SNOWFLAKE_PRIVATE_KEY_FILE")
+        if not path:
+            return None
+        raw = Path(path).read_bytes()
+
+    passphrase = os.environ.get("SNOWFLAKE_PRIVATE_KEY_PASSPHRASE") or None
+    key = serialization.load_pem_private_key(
+        raw, password=passphrase.encode() if passphrase else None
+    )
+    return key.private_bytes(
+        encoding=serialization.Encoding.DER,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption(),
+    )
+
+
 def open_source() -> tuple[SnapshotSource | LiveSource, str]:
     """Return the best available source, plus why it was chosen.
 
@@ -253,7 +282,7 @@ def open_source() -> tuple[SnapshotSource | LiveSource, str]:
             account=os.environ["SNOWFLAKE_ACCOUNT"],
             user=os.environ["SNOWFLAKE_USER"],
             password=os.environ.get("SNOWFLAKE_PASSWORD") or None,
-            private_key_file=os.environ.get("SNOWFLAKE_PRIVATE_KEY_FILE") or None,
+            private_key=_private_key_der(),
             role=os.environ.get("SNOWFLAKE_ROLE", "CONSENT_APP"),
             warehouse=os.environ.get("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
             database=os.environ.get("SNOWFLAKE_DATABASE", "CONSENT"),
@@ -262,7 +291,16 @@ def open_source() -> tuple[SnapshotSource | LiveSource, str]:
         )
         return LiveSource(con), "Connected to the warehouse."
     except Exception as exc:                               # noqa: BLE001
-        return SnapshotSource(), f"Warehouse connection failed, showing the snapshot: {_short(exc)}"
+        return SnapshotSource(), (
+            f"Warehouse connection failed, showing the snapshot: {_scrub(_short(exc))}"
+        )
+
+
+def _scrub(text: str) -> str:
+    """Never let key material reach the screen, whatever an exception carries."""
+    if "PRIVATE KEY" in text or "BEGIN" in text:
+        return "connection error suppressed because it echoed key material"
+    return text
 
 
 def _short(exc: Exception, limit: int = 160) -> str:

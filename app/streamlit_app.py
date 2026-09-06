@@ -11,10 +11,21 @@ from __future__ import annotations
 
 import io
 import csv
+import os
 
 import streamlit as st
 
 from warehouse import Case, open_source
+
+# Streamlit Cloud delivers secrets through st.secrets. warehouse.py deliberately
+# knows nothing about Streamlit, so bridge them into the environment here, before
+# anything asks for a connection. Absent secrets is the normal case, not an error.
+try:
+    for _key, _value in st.secrets.items():
+        if _key.startswith("SNOWFLAKE_") and isinstance(_value, str):
+            os.environ.setdefault(_key, _value)
+except Exception:  # noqa: BLE001 - no secrets file at all is fine
+    pass
 
 st.set_page_config(page_title="Consent", page_icon="🔒", layout="wide")
 

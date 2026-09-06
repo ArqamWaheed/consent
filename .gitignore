@@ -13,3 +13,9 @@ consent_bootstrap_*.csv
 
 # Chrome partial downloads that land in the repo dir.
 *.crdownload
+
+# Key material, in every shape it might land in.
+*.p8
+*.pem
+*.key
+secrets.toml
