@@ -3,3 +3,6 @@
 __pycache__/
 *.pyc
 .streamlit/secrets.toml
+
+# Strategy playbook — local only, never published.
+03-PLAYBOOK-consent.md
