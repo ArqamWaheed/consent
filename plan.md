@@ -1,39 +1,44 @@
 # plan.md — execution roadmap
 
-**Deadline:** 2026-09-07 06:59 UTC. Target publish 2026-09-06 ~21:00 UTC.
-**Spec:** `03-PLAYBOOK-consent.md`.
+**Deadline:** 2026-09-07 06:59 UTC. **Spec:** `03-PLAYBOOK-consent.md` (local only, gitignored).
 
 ## Current milestone
-**M2 — the pipeline runs for real in Snowflake.**
+**M7 — handoff. The build is done; three actions need the account owner.**
 
 ## Completed
-- **M0 Bootstrap** — `memory.md`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `.env.example`,
-  `.gitignore`, `scripts/run.sh`, licence, first commit.
-- **M1 Scaffold** — SQL legs A/B/C + fallback drafted, app skeleton, 60 synthetic rows.
+- **M0 Bootstrap** — `memory.md`, `AGENTS.md`, `CLAUDE.md`, `README.md`, licence, first commit.
+- **M1 Scaffold** — SQL legs drafted, app skeleton, 60 synthetic rows.
+- **M2 Warehouse** — gate run against the real account. Nine of eleven AI capabilities
+  refused; verdicts and verbatim errors recorded in `memory.md` and the README.
+- **M3 Data** — 60 rows loaded and deduplicated in `CONSENT.APP.RAW_CASES`.
+- **M4 Pipeline** — Leg C rebuilt on the `AI_AGG` per-row transform. 60/60 rows
+  redacted, classified and triaged in 24s. Brief written by `AI_AGG`. Both exported
+  to `data/` as the committed snapshot.
+- **M5 Security** — boundary test run for real. It FAILED (secondary roles), was
+  diagnosed, fixed with `USE SECONDARY ROLES NONE`, and re-verified as refused.
+- **M6 App + media** — dual-mode Streamlit app, 10 passing tests, 75s narrated demo
+  video, four generated images plus a real screenshot.
+- **M7 Post** — dev.to draft saved, unpublished, with cover, tags and all four images.
 
-## In progress
-- **M2 Warehouse** — run `sql/00_gate.sql`, record verdicts, then legs A → B → C.
+## Blocked on the account owner (each is one action)
+These are blocked by this environment's safety layer, not by the work.
+1. **Make the GitHub repo public and push.** `gh repo create consent --public
+   --source=. --push`. The post links `github.com/ArqamWaheed/consent`.
+2. **Deploy the app** (Streamlit Community Cloud, `app/streamlit_app.py`), then put
+   the URL into the post's `## Demo` section, replacing the placeholder line.
+3. **Publish the dev.to draft** once 1 and 2 are done.
 
-## Pending, in order
-1. **M3 Data** — synthetic rows loadable as pure SQL (`sql/15_load_synthetic.sql`) so the
-   repo is self-contained; sample intake PDF for the parse path.
-2. **M4 App** — dual-mode Streamlit: live warehouse when credentials exist, labelled
-   snapshot otherwise. Split screen + `/status` honesty panel.
-3. **M5 Verify** — smoke tests, app renders in both modes, capability grid filled from
-   observed results only.
-4. **M6 Ship** — public GitHub repo, Apache-2.0, README capability grid, deploy.
-5. **M7 Post** — dev.to draft per `../articlewriting/voice.md`. Draft only, never publish.
-6. **M8 Media** — cover + inline images, demo screen recording with narration.
-
-## Blockers
-- **Programmatic Snowflake credentials cannot be created in this environment** (the
-  safety classifier blocks credential setup and non-interactive auth). Consequence: SQL
-  is run through the Snowsight worksheet UI, and the deployed app ships in snapshot mode
-  until the account owner adds secrets. See `memory.md` → "Credential boundary".
+## Optional, in priority order if there is time
+1. **Live mode for the deployed app** — create a Snowflake user restricted to
+   `CONSENT_APP`, key-pair auth, put the secrets in Streamlit. The app flips to live
+   automatically; nothing to change in code. **Do not grant it any other role** —
+   see the secondary-roles note in `memory.md`.
+2. Host `demo/consent-demo.mp4` somewhere embeddable and swap it into `## Demo`.
+3. `AI_PARSE_DOCUMENT` probe, for grid completeness. Not load-bearing.
 
 ## Architectural next steps
-- Keep the app's warehouse access behind one data-access module so snapshot mode and
-  live mode are the same call site with two implementations.
+None outstanding. The live/snapshot split is behind `app/warehouse.py`; adding
+credentials requires no code change.
 
 ## Immediate next action
-Run `sql/00_gate.sql` in Snowsight and write the verdicts into `memory.md`.
+Item 1 above: make the repo public and push.
