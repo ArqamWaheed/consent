@@ -77,6 +77,26 @@ The thesis rests on Leg A, which cannot fail. B and C are upgrades.
 - Synthetic data only. Demoing a privacy tool on real casework would be the wrong answer.
 - `SAFE_CASES.method` records `cortex` or `regex` so the app never has to claim which ran.
 
+## LIVE MODE VERIFIED (2026-09-06)
+Service user `CONSENT_APP_SVC` exists: `TYPE=SERVICE`, key-pair auth,
+`DEFAULT_SECONDARY_ROLES=()`, and `SHOW GRANTS TO USER` returns exactly one row —
+USAGE on ROLE CONSENT_APP. Nothing else.
+
+`LiveSource` was then run against the real warehouse with that user and returned:
+- mode `live`; role `CONSENT_APP`; secondary roles `{"roles":"","value":""}`
+- boundary read **denied live**:
+  `002003 (42S02): SQL compilation error: Object 'CONSENT.APP.RAW_CASES' does not
+  exist or not authorized.`
+- `PRIVATE_ROW_COUNT` → 60 (via the view, with no table access)
+- SAFE_CASES → 60 rows; brief method `cortex`
+- live probes: AI_AGG + AI_SUMMARIZE_AGG pass; AI_REDACT/CLASSIFY/FILTER/EXTRACT
+  fail with `399258 (0A000) ... not available for trial accounts`
+
+So the live path is no longer untested. The private key lives at
+`~/.consent-keys/consent_app_rsa.p8`, outside the repo, and is gitignored by
+pattern. The deployed app stays in snapshot mode until that key is pasted into
+Streamlit's Secrets box by a human — an agent must not do that.
+
 ## Credential boundary (important, non-obvious)
 This environment's safety layer **blocks** creating Snowflake service credentials,
 non-interactive authentication, and creating a public GitHub repo. Consequences:
