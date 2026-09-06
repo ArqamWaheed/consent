@@ -6,3 +6,7 @@ __pycache__/
 
 # Strategy playbook — local only, never published.
 03-PLAYBOOK-consent.md
+
+# Snowsight result downloads land here when the browser save dialog defaults to cwd.
+consent_bootstrap_*.csv
+.streamlit/
