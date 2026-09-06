@@ -3,7 +3,11 @@
 **Deadline:** 2026-09-07 06:59 UTC. **Spec:** `03-PLAYBOOK-consent.md` (local only, gitignored).
 
 ## Current milestone
-**M7 — handoff. The build is done; three actions need the account owner.**
+**M8 — one action left: publish the dev.to draft.**
+
+**Live app:** https://consent-warehouse.streamlit.app (public, snapshot mode)
+**Repo:** https://github.com/ArqamWaheed/consent (public)
+**Draft:** saved and unpublished on dev.to, carrying the challenge submission badge.
 
 ## Completed
 - **M0 Bootstrap** — `memory.md`, `AGENTS.md`, `CLAUDE.md`, `README.md`, licence, first commit.
@@ -20,13 +24,15 @@
   video, four generated images plus a real screenshot.
 - **M7 Post** — dev.to draft saved, unpublished, with cover, tags and all four images.
 
-## Blocked on the account owner (each is one action)
-These are blocked by this environment's safety layer, not by the work.
-1. **Make the GitHub repo public and push.** `gh repo create consent --public
-   --source=. --push`. The post links `github.com/ArqamWaheed/consent`.
-2. **Deploy the app** (Streamlit Community Cloud, `app/streamlit_app.py`), then put
-   the URL into the post's `## Demo` section, replacing the placeholder line.
-3. **Publish the dev.to draft** once 1 and 2 are done.
+## Done since
+- Repo made public and pushed.
+- App deployed to Streamlit Community Cloud and verified from a clean headless
+  browser with no session: renders correctly, public, no page errors.
+- Post updated with the live URL and the `{% github %}` embed (which only validates
+  once the repo is public), re-saved as a draft.
+
+## Blocked on the account owner
+1. **Publish the dev.to draft.** Everything else is in place.
 
 ## Optional, in priority order if there is time
 1. **Live mode for the deployed app** — create a Snowflake user restricted to

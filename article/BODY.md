@@ -37,7 +37,7 @@ The app literally cannot read the private table. The left panel of the UI shows 
 
 ## Demo
 
-**Live:** _link goes here once the app is deployed._
+**Live:** https://consent-warehouse.streamlit.app
 
 A 75-second narrated walkthrough is in the repo at `demo/consent-demo.mp4`.
 
@@ -51,7 +51,7 @@ The **Warehouse status** panel prints the live region, account and role, and pro
 
 ## Code
 
-Repo: **github.com/ArqamWaheed/consent** _(going public with the submission)_
+{% github ArqamWaheed/consent %}
 
 Apache-2.0.
 
