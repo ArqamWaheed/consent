@@ -10,3 +10,6 @@ __pycache__/
 # Snowsight result downloads land here when the browser save dialog defaults to cwd.
 consent_bootstrap_*.csv
 .streamlit/
+
+# Chrome partial downloads that land in the repo dir.
+*.crdownload
