@@ -1,0 +1,61 @@
+CASE_ID,INTAKE_DATE,REDACTED_NOTE,NEED_TYPE,UNRESOLVED,METHOD
+CS-2000,2026-09-02,"[NAME] needs a solicitor for a benefits appeal, court date set. Contact [PHONE].",legal,TRUE,cortex
+CS-2001,2026-09-05,"[NAME] needs a solicitor for a benefits appeal, court date set. Contact [PHONE].",legal,TRUE,cortex
+CS-2002,2026-09-02,Doorstep visit to [ADDRESS]. [NAME] skipping meals so the children eat. Contact [PHONE].,food,TRUE,cortex
+CS-2003,2026-09-01,Doorstep visit to [ADDRESS]. [NAME] skipping meals so the children eat. Contact [PHONE].,food,TRUE,cortex
+CS-2004,2026-09-03,"[NAME] ([EMAIL]) unsure of immigration paperwork deadlines, referred on 2 Sep.",legal,TRUE,cortex
+CS-2005,2026-09-01,"[NAME] ([EMAIL]) unsure of immigration paperwork deadlines, referred on 4 Sep.",legal,TRUE,cortex
+CS-2006,2026-09-01,[NAME] ([EMAIL]) waiting on a mental health referral since 1 Sep.,health,TRUE,cortex
+CS-2007,2026-09-02,"[NAME] needs a solicitor for a benefits appeal, court date set. Contact [PHONE].",legal,TRUE,cortex
+CS-2008,2026-09-02,Doorstep visit to [ADDRESS]. [NAME] skipping meals so the children eat. Contact [PHONE].,food,TRUE,cortex
+CS-2009,2026-09-02,"[NAME] cannot afford meds this month, ref [REF]. GP at [ADDRESS]. Mobile [PHONE].",health,TRUE,cortex
+CS-2010,2026-09-05,"[NAME] has rent overdue two months, landlord threatening eviction at [ADDRESS]. Call [PHONE].",housing,TRUE,cortex
+CS-2011,2026-09-04,"[NAME] has rent overdue two months, landlord threatening eviction at [ADDRESS]. Call [PHONE].",housing,TRUE,cortex
+CS-2012,2026-09-02,"[NAME] needs a solicitor for a benefits appeal, court date set. Contact [PHONE].",legal,TRUE,cortex
+CS-2013,2026-09-03,[NAME] at [ADDRESS] received a court summons over council tax arrears. Ref [REF],housing,TRUE,cortex
+CS-2014,2026-09-01,"[NAME] called, no food in the house since 1 Sep. Two kids. Phone [PHONE]. Lives at [ADDRESS].",food,TRUE,cortex
+CS-2015,2026-09-04,Damp in the flat at [ADDRESS] making [NAME]'s asthma worse. Landlord not responding.,health,TRUE,cortex
+CS-2016,2026-09-02,"[NAME] has rent overdue two months, landlord threatening eviction at [ADDRESS]. Call [PHONE].",housing,TRUE,cortex
+CS-2017,2026-09-04,"[NAME] cannot afford meds this month, ref [REF]. GP at [ADDRESS]. Mobile [PHONE].",health,TRUE,cortex
+CS-2018,2026-09-05,"[NAME] needs a solicitor for a benefits appeal, court date set. Contact [PHONE].",legal,TRUE,cortex
+CS-2019,2026-09-03,"[NAME] missed a hospital appointment, no bus fare. Phone [PHONE]. Resolved after travel voucher.",health,FALSE,cortex
+CS-2020,2026-09-01,Damp in the flat at [ADDRESS] making [NAME]'s asthma worse. Landlord not responding.,health,TRUE,cortex
+CS-2021,2026-09-04,"[NAME] missed a hospital appointment, no bus fare. Phone [PHONE]. Resolved after travel voucher.",health,FALSE,cortex
+CS-2022,2026-09-02,Damp in the flat at [ADDRESS] making [NAME]'s asthma worse. Landlord not responding.,health,TRUE,cortex
+CS-2023,2026-09-02,Doorstep visit to [ADDRESS]. [NAME] skipping meals so the children eat. Contact [PHONE].,food,TRUE,cortex
+CS-2024,2026-09-01,Doorstep visit to [ADDRESS] [NAME] skipping meals so the children eat. Contact [PHONE].,food,TRUE,cortex
+CS-2025,2026-09-05,[NAME] at [ADDRESS] received a court summons over council tax arrears. Ref [REF].,housing,TRUE,cortex
+CS-2026,2026-09-04,[NAME] ([EMAIL]) waiting on a mental health referral since 1 Sep,health,TRUE,cortex
+CS-2027,2026-09-04,Doorstep visit to [ADDRESS] [NAME] skipping meals so the children eat. Contact [PHONE].,food,TRUE,cortex
+CS-2028,2026-09-01,"[NAME] ([EMAIL]) unsure of immigration paperwork deadlines, referred on 1 Sep.",legal,TRUE,cortex
+CS-2029,2026-09-04,"[NAME] missed a hospital appointment, no bus fare. Phone [PHONE]. Resolved after travel voucher.",health,FALSE,cortex
+CS-2030,2026-09-01,[NAME] ([EMAIL]) needs a food parcel this week; benefits delayed again. Ref [REF].,food,TRUE,cortex
+CS-2031,2026-09-01,"[NAME] sofa-surfing since 4 Sep, no fixed address. Email [EMAIL]. Case ref [REF].",housing,TRUE,cortex
+CS-2032,2026-09-03,"[NAME] cannot afford meds this month, ref [REF]. GP at [ADDRESS]. Mobile [PHONE].",health,TRUE,cortex
+CS-2033,2026-09-04,"[NAME] needs a solicitor for a benefits appeal, court date set. Contact [PHONE].",legal,TRUE,cortex
+CS-2034,2026-09-02,"[NAME] has rent overdue two months, landlord threatening eviction at [ADDRESS]. Call [PHONE].",housing,TRUE,cortex
+CS-2035,2026-09-04,"[NAME] needs a solicitor for a benefits appeal, court date set. Contact [PHONE].",legal,TRUE,cortex
+CS-2036,2026-09-03,[NAME] at [ADDRESS] received a court summons over council tax arrears. Ref [REF],housing,TRUE,cortex
+CS-2037,2026-09-03,"[NAME] needs a solicitor for a benefits appeal, court date set. Contact [PHONE].",legal,TRUE,cortex
+CS-2038,2026-09-02,"[NAME] missed a hospital appointment, no bus fare. Phone [PHONE]. Resolved after travel voucher.",health,FALSE,cortex
+CS-2039,2026-09-01,Doorstep visit to [ADDRESS]. [NAME] skipping meals so the children eat. Contact [PHONE].,food,TRUE,cortex
+CS-2040,2026-09-02,"[NAME] needs a solicitor for a benefits appeal, court date set. Contact [PHONE].",legal,TRUE,cortex
+CS-2041,2026-09-01,Damp in the flat at [ADDRESS] making [NAME]'s asthma worse. Landlord not responding.,health,TRUE,cortex
+CS-2042,2026-09-05,Damp in the flat at [ADDRESS] making [NAME]'s asthma worse. Landlord not responding.,health,TRUE,cortex
+CS-2043,2026-09-04,"[NAME] has rent overdue two months, landlord threatening eviction at [ADDRESS]. Call [PHONE].",housing,TRUE,cortex
+CS-2044,2026-09-04,[NAME] at [ADDRESS] received a court summons over council tax arrears. Ref [REF].,legal,TRUE,cortex
+CS-2045,2026-09-02,"[NAME] cannot afford meds this month, ref [REF]. GP at [ADDRESS]. Mobile [PHONE].",health,TRUE,cortex
+CS-2046,2026-09-05,[NAME] at [ADDRESS] received a court summons over council tax arrears. Ref [REF].,legal,TRUE,cortex
+CS-2047,2026-09-01,[NAME] ([EMAIL]) needs a food parcel this week; benefits delayed again. Ref [REF],food,TRUE,cortex
+CS-2048,2026-09-02,"[NAME] sofa-surfing since 5 Sep, no fixed address. Email [EMAIL]. Case ref [REF].",housing,TRUE,cortex
+CS-2049,2026-09-05,[NAME] at [ADDRESS] received a court summons over council tax arrears. Ref [REF].,legal,TRUE,cortex
+CS-2050,2026-09-02,Doorstep visit to [ADDRESS]. [NAME] skipping meals so the children eat. Contact [PHONE].,food,TRUE,cortex
+CS-2051,2026-09-05,"[NAME] cannot afford meds this month, ref [REF]. GP at [ADDRESS]. Mobile [PHONE].",health,TRUE,cortex
+CS-2052,2026-09-01,[NAME] ([EMAIL]) waiting on a mental health referral since 1 Sep,health,TRUE,cortex
+CS-2053,2026-09-01,"[NAME] ([EMAIL]) unsure of immigration paperwork deadlines, referred on 5 Sep.",legal,TRUE,cortex
+CS-2054,2026-09-03,[NAME] at [ADDRESS] received a court summons over council tax arrears. Ref [REF],housing,TRUE,cortex
+CS-2055,2026-09-03,Damp in the flat at [ADDRESS] making [NAME]'s asthma worse. Landlord not responding.,health,TRUE,cortex
+CS-2056,2026-09-01,Doorstep visit to [ADDRESS]. [NAME] skipping meals so the children eat. Contact [PHONE].,food,TRUE,cortex
+CS-2057,2026-09-03,[NAME] ([EMAIL]) needs a food parcel this week; benefits delayed again. Ref [REF].,food,TRUE,cortex
+CS-2058,2026-09-05,"[NAME] has rent overdue two months, landlord threatening eviction at [ADDRESS]. Call [PHONE].",housing,TRUE,cortex
+CS-2059,2026-09-04,[NAME] ([EMAIL]) waiting on a mental health referral since 4 Sep,health,TRUE,cortex

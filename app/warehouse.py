@@ -33,6 +33,30 @@ CORTEX_PROBES: dict[str, str] = {
 
 PRIVATE_TABLE = "CONSENT.APP.RAW_CASES"
 
+# Verdicts observed on the account this was built on, after BOTH halves of the
+# Cortex gate were granted. Shown in snapshot mode, labelled as recorded rather
+# than probed, so the honesty panel is never blank and never overstated.
+RECORDED_VERDICTS: dict[str, str] = {
+    "AI_AGG": "",
+    "AI_SUMMARIZE_AGG": "",
+    "AI_REDACT": "AI function _AI_REDACT is not available for trial accounts.",
+    "AI_CLASSIFY": "AI function AI_CLASSIFY is not available for trial accounts.",
+    "AI_FILTER": "AI function _AI_FILTER_WITH_PROMPT is not available for trial accounts.",
+    "AI_EXTRACT": "AI function _AI_EXTRACT is not available for trial accounts.",
+    "AI_COMPLETE":
+        "AI function _COMPLETE_WITH_PROMPT_HISTORY_LLM is not available for trial accounts.",
+    "SNOWFLAKE.CORTEX.SENTIMENT":
+        "AI function SENTIMENT is not available for trial accounts.",
+    "MASKING POLICY (Enterprise Edition)": "Unsupported feature 'MASKING POLICY'.",
+}
+
+# The verbatim refusal this account returns, recorded live. Shown in snapshot mode
+# so the panel quotes an observed result rather than describing one.
+RECORDED_DENIAL = (
+    "SQL compilation error: Object 'CONSENT.APP.RAW_CASES' does not exist or not "
+    "authorized."
+)
+
 
 @dataclass(frozen=True)
 class Case:
@@ -65,6 +89,7 @@ class Status:
     account: str = ""
     role: str = ""
     version: str = ""
+    secondary_roles: str = ""
     note: str = ""
     probes: dict[str, str] = field(default_factory=dict)   # name -> "" if ok else error
 
@@ -80,7 +105,7 @@ class SnapshotSource:
     mode = "snapshot"
 
     def status(self, reason: str = "") -> Status:
-        return Status(mode="snapshot", note=reason)
+        return Status(mode="snapshot", note=reason, probes=dict(RECORDED_VERDICTS))
 
     def cases(self) -> list[Case]:
         if not SNAPSHOT_CASES.exists():
@@ -116,10 +141,8 @@ class SnapshotSource:
         return BoundaryTest(
             denied=True,
             message=(
-                "Not connected to the warehouse, so this panel cannot be demonstrated "
-                "live. The recorded result is in the repository: SELECT on "
-                f"{PRIVATE_TABLE} as role CONSENT_APP returns "
-                "'Object does not exist or not authorized'."
+                "Not connected, so this is not a live refusal. Recorded from the "
+                f"account this was built on, as role CONSENT_APP: {RECORDED_DENIAL}"
             ),
         )
 
@@ -131,6 +154,22 @@ class LiveSource:
 
     def __init__(self, connection) -> None:
         self._con = connection
+        self._drop_secondary_roles()
+
+    def _drop_secondary_roles(self) -> None:
+        """Make the connection's role the ONLY role it has.
+
+        `role=CONSENT_APP` on the connection sets the *primary* role. It does not
+        drop the others. Snowflake activates every role the user holds as secondary
+        roles, and authorization considers those too — so a connection that reports
+        `CURRENT_ROLE() = CONSENT_APP` can still read a table only ACCOUNTADMIN was
+        granted. Observed on the account this was built on: the same SELECT returned
+        the private note before this statement and was refused after it.
+
+        Without this line the boundary is decorative.
+        """
+        with self._con.cursor() as cur:
+            cur.execute("USE SECONDARY ROLES NONE")
 
     def _rows(self, sql: str) -> list[tuple]:
         with self._con.cursor() as cur:
@@ -138,8 +177,9 @@ class LiveSource:
             return cur.fetchall()
 
     def status(self, reason: str = "") -> Status:
-        region, account, role, version = self._rows(
-            "SELECT CURRENT_REGION(), CURRENT_ACCOUNT(), CURRENT_ROLE(), CURRENT_VERSION()"
+        region, account, role, version, secondary = self._rows(
+            "SELECT CURRENT_REGION(), CURRENT_ACCOUNT(), CURRENT_ROLE(), "
+            "CURRENT_VERSION(), CURRENT_SECONDARY_ROLES()"
         )[0]
         probes: dict[str, str] = {}
         for name, sql in CORTEX_PROBES.items():
@@ -154,6 +194,7 @@ class LiveSource:
             account=str(account),
             role=str(role),
             version=str(version),
+            secondary_roles=str(secondary),
             probes=probes,
         )
 

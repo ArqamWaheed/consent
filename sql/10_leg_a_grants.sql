@@ -68,6 +68,27 @@ GRANT SELECT ON VIEW  CONSENT.APP.PRIVATE_ROW_COUNT TO ROLE CONSENT_APP;
 -- deliberately NOT granted to CONSENT_APP: RAW_CASES, PARSED, EXTRACTED.
 -- This absence is the only line in the project that makes the promise true.
 
--- Proof, for the post — run these two and watch the second one fail:
---   USE ROLE CONSENT_APP; SELECT * FROM CONSENT.APP.PRIVATE_ROW_COUNT;  -- 60
---   USE ROLE CONSENT_APP; SELECT * FROM CONSENT.APP.RAW_CASES;          -- denied
+-- ── PROVING IT, AND THE TRAP THAT ALMOST HID THE BUG ───────────────────────
+-- `USE ROLE CONSENT_APP` sets your PRIMARY role. It does not drop the others.
+-- Snowflake keeps every role you hold active as a SECONDARY role, and
+-- authorization considers those too. So this sequence LOOKS like a boundary test
+-- and is not one:
+--
+--   USE ROLE CONSENT_APP;
+--   SELECT CURRENT_ROLE();                              -- CONSENT_APP
+--   SELECT raw_note FROM CONSENT.APP.RAW_CASES LIMIT 1; -- ...returns the note
+--
+-- Observed on this account, verbatim, with CURRENT_ROLE() = CONSENT_APP:
+--   CURRENT_SECONDARY_ROLES() -> {"roles":"ACCOUNTADMIN,ORGADMIN","value":"ALL"}
+--
+-- Drop them, and the same query is refused:
+--
+--   USE SECONDARY ROLES NONE;
+--   SELECT CURRENT_SECONDARY_ROLES();                   -- {"roles":"","value":""}
+--   SELECT private_rows FROM CONSENT.APP.PRIVATE_ROW_COUNT;  -- 60
+--   SELECT raw_note FROM CONSENT.APP.RAW_CASES LIMIT 1;
+--     -> SQL compilation error: Object 'CONSENT.APP.RAW_CASES' does not exist
+--        or not authorized.
+--
+-- The app issues USE SECONDARY ROLES NONE on connect (app/warehouse.py).
+-- Without that line the grant boundary is decorative.

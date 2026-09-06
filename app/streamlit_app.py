@@ -146,6 +146,13 @@ with st.expander("Warehouse status", expanded=True):
             f"**Region** `{status.region}` · **Account** `{status.account}` · "
             f"**Role** `{status.role}` · **Version** `{status.version}`"
         )
+        st.write(f"**Secondary roles** `{status.secondary_roles or 'none'}`")
+        st.caption(
+            "Secondary roles matter more than they look. A connection can report "
+            "`CURRENT_ROLE() = CONSENT_APP` and still read a table it was never "
+            "granted, because every other role the user holds stays active unless "
+            "the session runs `USE SECONDARY ROLES NONE`. This app runs it on connect."
+        )
         for name, err in status.probes.items():
             if err:
                 st.write(f"❌ `{name}` — {err}")
@@ -153,6 +160,17 @@ with st.expander("Warehouse status", expanded=True):
                 st.write(f"✅ `{name}`")
     else:
         st.write(
-            "Not connected, so nothing here is probed live. The recorded verdicts "
-            "from the account this was built on are in `memory.md` and the README."
+            "**Not probed live.** These are the verdicts recorded on the account this "
+            "was built on, taken *after* granting both halves of the Cortex gate — so "
+            "none of the failures below is a missing grant."
+        )
+        for name, err in status.probes.items():
+            if err:
+                st.write(f"❌ `{name}` — {err}")
+            else:
+                st.write(f"✅ `{name}`")
+        st.caption(
+            "Two of eleven survived. `AI_AGG` and `AI_SUMMARIZE_AGG` are also the two "
+            "the docs exempt from needing the `CORTEX_USER` role — the trial gate and "
+            "the role gate draw the same line. The pipeline was rebuilt on `AI_AGG`."
         )

@@ -19,7 +19,21 @@ import warehouse  # noqa: E402
 def test_snapshot_source_reports_snapshot_mode():
     status = warehouse.SnapshotSource().status("no credentials")
     assert status.mode == "snapshot"
-    assert status.probes == {}, "snapshot mode must not report probe verdicts it never ran"
+    # Snapshot mode may show verdicts, but only the recorded ones, unmodified.
+    # The UI is responsible for labelling them "not probed live"; this asserts it
+    # cannot silently invent a verdict that was never observed.
+    assert status.probes == warehouse.RECORDED_VERDICTS
+
+
+def test_recorded_verdicts_match_the_probes_the_app_runs_live():
+    """Every function the live panel probes must have a recorded counterpart."""
+    missing = set(warehouse.CORTEX_PROBES) - set(warehouse.RECORDED_VERDICTS)
+    assert not missing, f"no recorded verdict for {missing}"
+
+
+def test_only_the_two_documented_functions_passed():
+    passed = {k for k, v in warehouse.RECORDED_VERDICTS.items() if not v}
+    assert passed == {"AI_AGG", "AI_SUMMARIZE_AGG"}
 
 
 def test_open_source_without_credentials_falls_back(monkeypatch):
@@ -57,3 +71,35 @@ def test_boundary_test_reports_denial_in_snapshot_mode():
     result = warehouse.SnapshotSource().boundary_test()
     assert result.denied is True
     assert "CONSENT.APP.RAW_CASES" in result.message
+
+
+def test_recorded_denial_is_the_observed_error():
+    """The snapshot panel must quote a real refusal, not a paraphrase of one."""
+    assert "does not exist or not authorized" in warehouse.RECORDED_DENIAL
+    assert warehouse.PRIVATE_TABLE in warehouse.RECORDED_DENIAL
+
+
+def test_snapshot_brief_never_names_an_individual():
+    """AI_AGG was told to cite counts, never people. Verify it obeyed."""
+    brief = warehouse.SnapshotSource().brief()
+    assert brief is not None, "no brief snapshot committed"
+    import csv
+    from pathlib import Path
+
+    raw = Path(__file__).resolve().parent.parent / "data" / "synthetic_cases.csv"
+    lines = [l for l in raw.open(encoding="utf-8") if not l.startswith("#")]
+    names = set()
+    for row in csv.DictReader(lines):
+        for word in row["raw_note"].split():
+            token = word.strip(".,()'").strip()
+            if token.istitle() and len(token) > 3:
+                names.add(token)
+    # Surnames from the roster must not appear in a brief meant for a funder.
+    for surname in ("Fischer", "Alvarez", "Nowak", "Kovac", "Haddad", "Okafor"):
+        assert surname not in brief.text, f"{surname} leaked into the brief"
+
+
+def test_every_snapshot_row_came_from_the_pipeline():
+    cases = warehouse.SnapshotSource().cases()
+    assert len(cases) == 60
+    assert len({c.case_id for c in cases}) == 60
