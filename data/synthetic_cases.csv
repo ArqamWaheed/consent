@@ -1,0 +1,63 @@
+# SYNTHETIC DATA. Every name, phone number, address, email and case reference
+# below is fabricated. No real casework was used to build or demo this project.
+case_id,intake_date,raw_note,source_file
+CS-2000,2026-09-02,"Amara Fischer needs a solicitor for a benefits appeal, court date set. Contact 555-0562.",synthetic_cases.csv
+CS-2001,2026-09-05,"Mei Silva needs a solicitor for a benefits appeal, court date set. Contact 555-0196.",synthetic_cases.csv
+CS-2002,2026-09-02,Doorstep visit to 169 King Street. Mei Abara skipping meals so the children eat. Contact 555-0563.,synthetic_cases.csv
+CS-2003,2026-09-01,Doorstep visit to 11 Mill Rd. Viktor Nowak skipping meals so the children eat. Contact 555-0160.,synthetic_cases.csv
+CS-2004,2026-09-03,"Samuel Fischer (samuel.fischer@example.org) unsure of immigration paperwork deadlines, referred on 2 Sep.",synthetic_cases.csv
+CS-2005,2026-09-01,"Maria Nowak (maria.nowak@example.org) unsure of immigration paperwork deadlines, referred on 4 Sep.",synthetic_cases.csv
+CS-2006,2026-09-01,Samuel Osei (samuel.osei@example.org) waiting on a mental health referral since 1 Sep.,synthetic_cases.csv
+CS-2007,2026-09-02,"Tomasz Duarte needs a solicitor for a benefits appeal, court date set. Contact 555-0495.",synthetic_cases.csv
+CS-2008,2026-09-02,Doorstep visit to 103 Vernon Road. Lucia Abara skipping meals so the children eat. Contact 555-0825.,synthetic_cases.csv
+CS-2009,2026-09-02,"Samuel Nowak cannot afford meds this month, ref CS-2009. GP at 87 Bridge St. Mobile 555-0418.",synthetic_cases.csv
+CS-2010,2026-09-05,"Tomasz Alvarez has rent overdue two months, landlord threatening eviction at 121 Elm Rd. Call 555-0161.",synthetic_cases.csv
+CS-2011,2026-09-04,"Kwame Kovac has rent overdue two months, landlord threatening eviction at 35 Vernon Road. Call 555-0295.",synthetic_cases.csv
+CS-2012,2026-09-02,"Fatima Alvarez needs a solicitor for a benefits appeal, court date set. Contact 555-0376.",synthetic_cases.csv
+CS-2013,2026-09-03,Mei Wright at 12 Mill Rd received a court summons over council tax arrears. Ref CS-2013.,synthetic_cases.csv
+CS-2014,2026-09-01,"Mei Kaur called, no food in the house since 1 Sep. Two kids. Phone 555-0950. Lives at 77 Vernon Road.",synthetic_cases.csv
+CS-2015,2026-09-04,Damp in the flat at 155 Ash Lane making Joseph Osei's asthma worse. Landlord not responding.,synthetic_cases.csv
+CS-2016,2026-09-02,"Joseph Moreau has rent overdue two months, landlord threatening eviction at 149 Mill Rd. Call 555-0952.",synthetic_cases.csv
+CS-2017,2026-09-04,"Colm Chen cannot afford meds this month, ref CS-2017. GP at 50 Mill Rd. Mobile 555-0355.",synthetic_cases.csv
+CS-2018,2026-09-05,"Mei Nowak needs a solicitor for a benefits appeal, court date set. Contact 555-0531.",synthetic_cases.csv
+CS-2019,2026-09-03,"Colm Abara missed a hospital appointment, no bus fare. Phone 555-0363. Resolved after travel voucher.",synthetic_cases.csv
+CS-2020,2026-09-01,Damp in the flat at 124 Prospect Ave making Grace Haddad's asthma worse. Landlord not responding.,synthetic_cases.csv
+CS-2021,2026-09-04,"Fatima Petrov missed a hospital appointment, no bus fare. Phone 555-0866. Resolved after travel voucher.",synthetic_cases.csv
+CS-2022,2026-09-02,Damp in the flat at 74 Ash Lane making Ahmed Okafor's asthma worse. Landlord not responding.,synthetic_cases.csv
+CS-2023,2026-09-02,Doorstep visit to 86 King Street. Hana Haddad skipping meals so the children eat. Contact 555-0561.,synthetic_cases.csv
+CS-2024,2026-09-01,Doorstep visit to 81 Bridge St. Maria Moreau skipping meals so the children eat. Contact 555-0466.,synthetic_cases.csv
+CS-2025,2026-09-05,Grace Duarte at 36 Bridge St received a court summons over council tax arrears. Ref CS-2025.,synthetic_cases.csv
+CS-2026,2026-09-04,Ahmed Haddad (ahmed.haddad@example.org) waiting on a mental health referral since 1 Sep.,synthetic_cases.csv
+CS-2027,2026-09-04,Doorstep visit to 129 Prospect Ave. Rosa Alvarez skipping meals so the children eat. Contact 555-0984.,synthetic_cases.csv
+CS-2028,2026-09-01,"Joseph Alvarez (joseph.alvarez@example.org) unsure of immigration paperwork deadlines, referred on 1 Sep.",synthetic_cases.csv
+CS-2029,2026-09-04,"Rosa Kaur missed a hospital appointment, no bus fare. Phone 555-0497. Resolved after travel voucher.",synthetic_cases.csv
+CS-2030,2026-09-01,Viktor Kovac (viktor.kovac@example.org) needs a food parcel this week; benefits delayed again. Ref CS-2030.,synthetic_cases.csv
+CS-2031,2026-09-01,"Tomasz Moreau sofa-surfing since 4 Sep, no fixed address. Email tomasz.moreau@example.org. Case ref CS-2031.",synthetic_cases.csv
+CS-2032,2026-09-03,"Elena Haddad cannot afford meds this month, ref CS-2032. GP at 158 Mill Rd. Mobile 555-0794.",synthetic_cases.csv
+CS-2033,2026-09-04,"Lucia Osei needs a solicitor for a benefits appeal, court date set. Contact 555-0434.",synthetic_cases.csv
+CS-2034,2026-09-02,"Fatima Abara has rent overdue two months, landlord threatening eviction at 151 Ash Lane. Call 555-0324.",synthetic_cases.csv
+CS-2035,2026-09-04,"Hana Okafor needs a solicitor for a benefits appeal, court date set. Contact 555-0828.",synthetic_cases.csv
+CS-2036,2026-09-03,Ngozi Petrov at 107 Vernon Road received a court summons over council tax arrears. Ref CS-2036.,synthetic_cases.csv
+CS-2037,2026-09-03,"Samuel Nowak needs a solicitor for a benefits appeal, court date set. Contact 555-0948.",synthetic_cases.csv
+CS-2038,2026-09-02,"Elena Wright missed a hospital appointment, no bus fare. Phone 555-0119. Resolved after travel voucher.",synthetic_cases.csv
+CS-2039,2026-09-01,Doorstep visit to 38 Elm Rd. Ngozi Osei skipping meals so the children eat. Contact 555-0897.,synthetic_cases.csv
+CS-2040,2026-09-02,"Tomasz Diallo needs a solicitor for a benefits appeal, court date set. Contact 555-0770.",synthetic_cases.csv
+CS-2041,2026-09-01,Damp in the flat at 4 Elm Rd making Lucia Mensah's asthma worse. Landlord not responding.,synthetic_cases.csv
+CS-2042,2026-09-05,Damp in the flat at 90 Prospect Ave making Colm Mensah's asthma worse. Landlord not responding.,synthetic_cases.csv
+CS-2043,2026-09-04,"Ibrahim Osei has rent overdue two months, landlord threatening eviction at 107 King Street. Call 555-0189.",synthetic_cases.csv
+CS-2044,2026-09-04,Fatima Alvarez at 142 Prospect Ave received a court summons over council tax arrears. Ref CS-2044.,synthetic_cases.csv
+CS-2045,2026-09-02,"Fatima Byrne cannot afford meds this month, ref CS-2045. GP at 166 King Street. Mobile 555-0839.",synthetic_cases.csv
+CS-2046,2026-09-05,Grace Duarte at 84 Ash Lane received a court summons over council tax arrears. Ref CS-2046.,synthetic_cases.csv
+CS-2047,2026-09-01,Ahmed Fischer (ahmed.fischer@example.org) needs a food parcel this week; benefits delayed again. Ref CS-2047.,synthetic_cases.csv
+CS-2048,2026-09-02,"Grace Lynch sofa-surfing since 5 Sep, no fixed address. Email grace.lynch@example.org. Case ref CS-2048.",synthetic_cases.csv
+CS-2049,2026-09-05,Priya Kovac at 134 Elm Rd received a court summons over council tax arrears. Ref CS-2049.,synthetic_cases.csv
+CS-2050,2026-09-02,Doorstep visit to 145 Ash Lane. Colm Fischer skipping meals so the children eat. Contact 555-0639.,synthetic_cases.csv
+CS-2051,2026-09-05,"Elena Abara cannot afford meds this month, ref CS-2051. GP at 158 Mill Rd. Mobile 555-0965.",synthetic_cases.csv
+CS-2052,2026-09-01,Joseph Moreau (joseph.moreau@example.org) waiting on a mental health referral since 1 Sep.,synthetic_cases.csv
+CS-2053,2026-09-01,"Maria Diallo (maria.diallo@example.org) unsure of immigration paperwork deadlines, referred on 5 Sep.",synthetic_cases.csv
+CS-2054,2026-09-03,Grace Silva at 139 Vernon Road received a court summons over council tax arrears. Ref CS-2054.,synthetic_cases.csv
+CS-2055,2026-09-03,Damp in the flat at 88 Vernon Road making Lucia Moreau's asthma worse. Landlord not responding.,synthetic_cases.csv
+CS-2056,2026-09-01,Doorstep visit to 9 Ash Lane. Fatima Lynch skipping meals so the children eat. Contact 555-0732.,synthetic_cases.csv
+CS-2057,2026-09-03,Fatima Haddad (fatima.haddad@example.org) needs a food parcel this week; benefits delayed again. Ref CS-2057.,synthetic_cases.csv
+CS-2058,2026-09-05,"Mei Moreau has rent overdue two months, landlord threatening eviction at 129 King Street. Call 555-0207.",synthetic_cases.csv
+CS-2059,2026-09-04,Fatima Kovac (fatima.kovac@example.org) waiting on a mental health referral since 4 Sep.,synthetic_cases.csv
